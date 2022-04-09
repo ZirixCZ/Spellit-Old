@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import socketClient from "socket.io-client";
 import SpeechSynthesis from "./SpeechSynthesis";
 import {
   Center,
@@ -10,10 +11,31 @@ import {
   Select,
 } from "@chakra-ui/react";
 
+// TODO: figure out how to replace ./SpeechSynthesis.js with the server socket.io thingy
+// TODO: think of better names, oh gosh...
 const TextToSpeech = () => {
-  const [input, setInput] = useState("testing audio");
-  const [text, setText] = useState("testing audio");
+  const SERVER = "http://localhost:8080/";
+  const [socket] = useState(() => {
+    return socketClient(SERVER);
+  });
+  const [input, setInput] = useState(null); // TODO: think of a way of handeling the onChange without this
+  const [text, setText] = useState(null);
   const [language, setLanguage] = useState("English");
+
+  useEffect(() => {
+    socket.on("connection", () => {
+      socket.on("TextToSpeech", (output) => {
+        console.log(JSON.stringify(output)); // FIXME: is null, should be SpeechSynthesizer... maybe
+      });
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (text == null || text == undefined) return;
+    socket.emit("TextToSpeech", {
+      text: text,
+    });
+  }, [text]);
 
   const properties = {
     text: text,

@@ -18,8 +18,10 @@ const SpeechSynthesis = (props) => {
         synthesizer.speakTextAsync(
             props.text,
             (result) => {
+                if (result) {
+                    console.log(JSON.stringify(result));
+                }
                 synthesizer.close();
-                return result.audioData;
             }
         );
     }, [props.text])

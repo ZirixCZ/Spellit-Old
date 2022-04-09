@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode=production",
+    "serve": "./node_modules/.bin/http-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "socket.io": "^4.4.1"
+  },
+  "dependencies": {
+    "install": "^0.13.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
+    "npm": "^8.6.0"
+  }
+}

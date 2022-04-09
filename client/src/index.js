@@ -1,5 +1,3 @@
-// DONE: process.env
-// TODO: push code to github
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
