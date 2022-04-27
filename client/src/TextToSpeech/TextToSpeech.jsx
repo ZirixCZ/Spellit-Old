@@ -22,14 +22,20 @@ const TextToSpeech = () => {
   const [text, setText] = useState(null);
   const [language, setLanguage] = useState("English");
 
+  const [audioStream, setAudioStream] = useState(null);
+
   useEffect(() => {
     socket.on("connection", () => {
       socket.on("TextToSpeech", (output) => {
-        console.log(JSON.stringify(output)); // FIXME: is null, should be SpeechSynthesizer... maybe
+        //console.log(JSON.parse(JSON.stringify(output)).output)
+        // console logging the stream from azure
+        console.log(output);
+        setAudioStream(output);
       });
     });
   }, [socket]);
 
+  // sending the text to the server
   useEffect(() => {
     if (text == null || text == undefined) return;
     socket.emit("TextToSpeech", {
@@ -48,7 +54,10 @@ const TextToSpeech = () => {
     e.preventDefault();
     setText(input);
   };
+  // audiocontext
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
 
+  const audioContext = new AudioContext();
   return (
     <>
       <Center h="100vh" w="100vw">
@@ -81,12 +90,13 @@ const TextToSpeech = () => {
               </Select>
             </ButtonGroup>
           </Stack>
+          <audio src="" controls></audio>
         </FormControl>
       </Center>
-      <SpeechSynthesis
+      {/* <SpeechSynthesis
         text={properties.text}
         language={properties.language}
-      ></SpeechSynthesis>
+      ></SpeechSynthesis> */}
     </>
   );
 };
