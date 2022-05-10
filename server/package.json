@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node src/index.js",
     "build": "webpack --mode=production",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "node --version"
+    "serve": "node src/index.js"
   },
   "keywords": [],
   "author": "",
