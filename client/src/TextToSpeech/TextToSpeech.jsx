@@ -10,11 +10,12 @@ import {
   Stack,
   Select,
 } from "@chakra-ui/react";
+import speechSynthesis from "./SpeechSynthesis";
 
 // TODO: figure out how to replace ./SpeechSynthesis.js with the server socket.io thingy
 // TODO: think of better names, oh gosh...
 const TextToSpeech = () => {
-  const SERVER = "http://localhost:8080/";
+  const SERVER = "http://172.20.10.2:3000/";
   const [socket] = useState(() => {
     return socketClient(SERVER);
   });
@@ -26,6 +27,7 @@ const TextToSpeech = () => {
 
   useEffect(() => {
     socket.on("connection", () => {
+      console.log("CONNECTION")
       socket.on("TextToSpeech", (output) => {
         //console.log(JSON.parse(JSON.stringify(output)).output)
         // console logging the stream from azure
@@ -37,17 +39,32 @@ const TextToSpeech = () => {
 
   // sending the text to the server
   useEffect(() => {
-    if (text == null || text == undefined) return;
+    if (text === null || text === undefined) return;
     socket.emit("TextToSpeech", {
       text: text,
     });
   }, [text]);
+
+  useEffect(() => {
+    if (audioStream == null) return;
+    let synth = window.speechSynthesis;
+    let utterance = new SpeechSynthesisUtterance(audioStream);
+    synth.speak(utterance);
+  }, [audioStream])
 
   const properties = {
     text: text,
     language: language,
   };
 
+  const newArrowFunction = () => {
+    let synth = window.speechSynthesis;
+    let utterance = new SpeechSynthesisUtterance("HELLO");
+    synth.speak(utterance);
+
+    console.log(utterance);
+    console.log(synth);
+  }
   const buttonClickHandlerLanguage = (e) => setLanguage(e.target.value);
   const inputHandler = (e) => setInput(e.target.value);
   const buttonClickHandlerText = (e) => {
@@ -92,6 +109,10 @@ const TextToSpeech = () => {
           </Stack>
           <audio src="" controls></audio>
         </FormControl>
+        <Button colorScheme="black" onClick={newArrowFunction}>
+          Duh
+        </Button>
+
       </Center>
       {/* <SpeechSynthesis
         text={properties.text}
