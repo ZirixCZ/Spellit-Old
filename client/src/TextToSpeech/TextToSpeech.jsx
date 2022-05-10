@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import socketClient from "socket.io-client";
-import SpeechSynthesis from "./SpeechSynthesis";
 import {
   Center,
   FormControl,
@@ -10,29 +9,25 @@ import {
   Stack,
   Select,
 } from "@chakra-ui/react";
-import speechSynthesis from "./SpeechSynthesis";
 
 // TODO: figure out how to replace ./SpeechSynthesis.js with the server socket.io thingy
 // TODO: think of better names, oh gosh...
 const TextToSpeech = () => {
-  const SERVER = "http://172.20.10.2:3000/";
+  const SERVER = "https://spellit-server-4ow2c.ondigitalocean.app/";
   const [socket] = useState(() => {
     return socketClient(SERVER);
   });
-  const [input, setInput] = useState(null); // TODO: think of a way of handeling the onChange without this
-  const [text, setText] = useState(null);
+  const [inputOnChange, setInputOnChange] = useState(null);
   const [language, setLanguage] = useState("English");
-
-  const [audioStream, setAudioStream] = useState(null);
+  const [textToPlay, setTextToPlay] = useState(null);
+  const [text, setText] = useState(null);
 
   useEffect(() => {
     socket.on("connection", () => {
-      console.log("CONNECTION")
-      socket.on("TextToSpeech", (output) => {
-        //console.log(JSON.parse(JSON.stringify(output)).output)
-        // console logging the stream from azure
-        console.log(output);
-        setAudioStream(output);
+      console.log(`Connected to server as ${socket.id}`)
+      socket.on("tts", (output) => {
+        console.log(`Broadcast: ${output}`);
+        setTextToPlay(output);
       });
     });
   }, [socket]);
@@ -40,41 +35,29 @@ const TextToSpeech = () => {
   // sending the text to the server
   useEffect(() => {
     if (text === null || text === undefined) return;
-    socket.emit("TextToSpeech", {
+    socket.emit("tts", {
       text: text,
     });
   }, [text]);
 
+  // play the audio with web speech api
   useEffect(() => {
-    if (audioStream == null) return;
+    if (textToPlay == null) return;
     let synth = window.speechSynthesis;
-    let utterance = new SpeechSynthesisUtterance(audioStream);
+    let utterance = new SpeechSynthesisUtterance(textToPlay);
     synth.speak(utterance);
-  }, [audioStream])
+  }, [textToPlay]);
 
-  const properties = {
-    text: text,
-    language: language,
-  };
-
-  const newArrowFunction = () => {
-    let synth = window.speechSynthesis;
-    let utterance = new SpeechSynthesisUtterance("HELLO");
-    synth.speak(utterance);
-
-    console.log(utterance);
-    console.log(synth);
-  }
+  // choose language
   const buttonClickHandlerLanguage = (e) => setLanguage(e.target.value);
-  const inputHandler = (e) => setInput(e.target.value);
+  // When typing, change input to the written text
+  const inputHandler = (e) => setInputOnChange(e.target.value);
+  // When this is clicked, put input into text
   const buttonClickHandlerText = (e) => {
     e.preventDefault();
-    setText(input);
+    setText(inputOnChange);
   };
-  // audiocontext
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-  const audioContext = new AudioContext();
   return (
     <>
       <Center h="100vh" w="100vw">
@@ -109,16 +92,9 @@ const TextToSpeech = () => {
           </Stack>
           <audio src="" controls></audio>
         </FormControl>
-        <Button colorScheme="black" onClick={newArrowFunction}>
-          Duh
-        </Button>
-
       </Center>
-      {/* <SpeechSynthesis
-        text={properties.text}
-        language={properties.language}
-      ></SpeechSynthesis> */}
     </>
   );
 };
+
 export default TextToSpeech;
