@@ -3,16 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node src/index.js",
+    "build": "webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.3",
     "socket.io": "^4.4.1",
-    "express": "^4.17.3"
+    "webpack": "^5.72.1",
+    "webpack-dev-server": "^4.9.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.9.2"
   }
 }

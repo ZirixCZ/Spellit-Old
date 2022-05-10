@@ -1,7 +1,8 @@
 //import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
+
+var createServer = require('http');
+var Server = require('socket.io');
+var express = require('express');
 
 const app = express();
 const httpServer = createServer(app);
