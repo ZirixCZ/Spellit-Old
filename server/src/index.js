@@ -1,12 +1,12 @@
 //import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 
-var createServer = require('http');
+var http = require('http');
 var Server = require('socket.io');
 var express = require('express');
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const httpServer = http.createServer(app);
+const io = new Server.Server(httpServer, {
     cors: {
         origin: "*",
     }
