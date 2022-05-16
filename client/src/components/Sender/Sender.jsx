@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
 import socketClient from "socket.io-client";
-import {Button, ButtonGroup, Center, FormControl, Input, Stack,} from "@chakra-ui/react";
 import Synthesis from "../../modules/Synthesis";
 
 const Sender = () => {
-    const SERVER = "https://spellit-server-4ow2c.ondigitalocean.app/";
+    const SERVER = "http://localhost:8080";
     const [socket] = useState(() => {
         return socketClient(SERVER);
     });
@@ -46,30 +45,11 @@ const Sender = () => {
 
     return (
         <>
-            <Center h="100vh" w="100vw">
-                <FormControl w="max">
-                    <Stack
-                        flexDir="column"
-                        w={{base: "75vw", md: "75vw", lg: "50vw"}}
-                        spacing={4}
-                    >
-                        <Input
-                            htmlSize={4}
-                            variant="flushed"
-                            width="100%"
-                            type="text"
-                            id="input"
-                            placeholder="type something"
-                            onChange={inputHandler}
-                        ></Input>
-                        <ButtonGroup variant="outline" spacing="6" w="100vw">
-                            <Button colorScheme="black" onClick={btnTextStateChange}>
-                                Send
-                            </Button>
-                        </ButtonGroup>
-                    </Stack>
-                </FormControl>
-            </Center>
+            <div className="flex w-screen h-screen">
+                <form className="w-full h-full">
+                    <input className="w-full h-full" onChange={inputHandler}>Hello</input>
+                </form>
+            </div>
         </>
     );
 }
