@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import socketClient from "socket.io-client";
 import {
   Center,
@@ -10,24 +10,34 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-// TODO: figure out how to replace ./SpeechSynthesis.js with the server socket.io thingy
+// TODO: figure out how to replace ./SpeechSynthesis.js with the server socket.io thingy <- DONE, YEE
 // TODO: think of better names, oh gosh...
 const TextToSpeech = () => {
-  const SERVER = "https://spellit-server-4ow2c.ondigitalocean.app/";
+  const SERVER = "http://localhost:8000/";
   const [socket] = useState(() => {
     return socketClient(SERVER);
   });
-  const [inputOnChange, setInputOnChange] = useState(null);
-  const [language, setLanguage] = useState("English");
-  const [textToPlay, setTextToPlay] = useState(null);
+  const [input, setInput] = useState(null); // TODO: think of a way of handling the onChange without this
   const [text, setText] = useState(null);
+  const [language, setLanguage] = useState("English");
+
+  const [audioStream, setAudioStream] = useState(null);
+  const playerRef = useRef();
 
   useEffect(() => {
     socket.on("connection", () => {
-      console.log(`Connected to server as ${socket.id}`)
-      socket.on("tts", (output) => {
-        console.log(`Broadcast: ${output}`);
-        setTextToPlay(output);
+      socket.on("TextToSpeech", (output) => {
+        console.log(output);
+        setAudioStream(output);
+        let audio = playerRef.current;
+        let blob = new Blob([output], {type: 'audio/wav'});
+        let objectUrl = URL.createObjectURL(blob);
+        audio.src = objectUrl;
+        // Release resource when it's loaded
+        audio.onload = function(evt) {
+          URL.revokeObjectURL(objectUrl);
+        };
+        audio.play();
       });
     });
   }, [socket]);
@@ -90,7 +100,7 @@ const TextToSpeech = () => {
               </Select>
             </ButtonGroup>
           </Stack>
-          <audio src="" controls></audio>
+          <audio src="" controls id="player" ref={playerRef}></audio>
         </FormControl>
       </Center>
     </>
