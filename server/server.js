@@ -57,7 +57,6 @@ async function textToSpeech(text) {
     // return new Blob(bufferStream.pipe());
     return bufferStream;
 }
-
 io.on("connection", (socket) => {
     console.log(`new client:${socket.id}`);
     socket.emit("connection");

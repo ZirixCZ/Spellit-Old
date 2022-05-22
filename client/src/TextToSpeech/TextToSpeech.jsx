@@ -44,27 +44,30 @@ const TextToSpeech = () => {
 
   // sending the text to the server
   useEffect(() => {
-    if (text == null || text == undefined) return;
-    socket.emit("TextToSpeech", {
+    if (text === null || text === undefined) return;
+    socket.emit("tts", {
       text: text,
     });
   }, [text]);
 
-  const properties = {
-    text: text,
-    language: language,
-  };
+  // play the audio with web speech api
+  useEffect(() => {
+    if (textToPlay == null) return;
+    let synth = window.speechSynthesis;
+    let utterance = new SpeechSynthesisUtterance(textToPlay);
+    synth.speak(utterance);
+  }, [textToPlay]);
 
+  // choose language
   const buttonClickHandlerLanguage = (e) => setLanguage(e.target.value);
-  const inputHandler = (e) => setInput(e.target.value);
+  // When typing, change input to the written text
+  const inputHandler = (e) => setInputOnChange(e.target.value);
+  // When this is clicked, put input into text
   const buttonClickHandlerText = (e) => {
     e.preventDefault();
-    setText(input);
+    setText(inputOnChange);
   };
-  // audiocontext
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-  const audioContext = new AudioContext();
   return (
     <>
       <Center h="100vh" w="100vw">
@@ -100,11 +103,8 @@ const TextToSpeech = () => {
           <audio src="" controls id="player" ref={playerRef}></audio>
         </FormControl>
       </Center>
-      {/* <SpeechSynthesis
-        text={properties.text}
-        language={properties.language}
-      ></SpeechSynthesis> */}
     </>
   );
 };
+
 export default TextToSpeech;
