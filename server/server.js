@@ -57,10 +57,10 @@ io.on("connection", (socket) => {
     // Emits a connection back to the requesting client
     socket.emit("connection");
     // Socket.io -> Listening for TextToSpeech
-    socket.on("TextToSpeech", async (text) => {
+    socket.on("tts", async (text) => {
         let bufferStream = await textToSpeech(text);
         // Emits back a TextToSpeech with the bufferStream from textToSpeech()
-        io.emit("TextToSpeech", bufferStream);
+        io.emit("tts", bufferStream);
     })
 });
 
