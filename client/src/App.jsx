@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {Route, Routes} from "react-router-dom";
-import Controls from "./components/AudioControls/Controls";
+import Controls from "./pages/Controls";
 import NavBar from "./components/NavBar/NavBar";
-import Rooms from "./components/Rooms/Rooms";
+import Rooms from "./pages/Rooms";
 import socket from "./modules/Socket";
 
 const App = () => {

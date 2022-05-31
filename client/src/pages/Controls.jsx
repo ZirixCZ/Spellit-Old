@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, ButtonGroup, Center, FormControl, Input, Stack,} from "@chakra-ui/react";
-import Audio from "../../modules/Audio";
-import socket from "../../modules/Socket";
+import Audio from "../modules/Audio";
+import socket from "../modules/Socket";
 
 const Controls = () => {
     const [input, setInput] = useState(null);
@@ -17,6 +17,9 @@ const Controls = () => {
         socket.on("tts", (output) => {
             console.log("TextToSpeech before setAudioStream")
             setAudioStream(output)
+        });
+        socket.on("broadcast", (broadcast) => {
+            console.log(broadcast);
         });
     }, [socket]);
 

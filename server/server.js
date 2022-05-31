@@ -50,14 +50,21 @@ async function textToSpeech(text) {
     return bufferStream;
 }
 
+let rooms = [];
+
 // Socket.io -> Listening for a new connection
 io.on("connection", (socket) => {
+    io.to("BRUH").emit("broadcast", "bruh");
     // Printing out new connection's identification
     console.log(`new client:${socket.id}`);
     // Emits a connection back to the requesting client
     socket.emit("connection");
+    socket.on("roomCreation", (roomName) => {
+        console.log(roomName);
+    })
     // Socket.io -> Listening for TextToSpeech
     socket.on("tts", async (text) => {
+        socket.join("BRUH");
         let bufferStream = await textToSpeech(text);
         // Emits back a TextToSpeech with the bufferStream from textToSpeech()
         io.emit("tts", bufferStream);
