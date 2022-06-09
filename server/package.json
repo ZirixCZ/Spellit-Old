@@ -4,9 +4,6 @@
   "description": "",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "build": "node server.js"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",

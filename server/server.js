@@ -4,7 +4,7 @@ import {createServer} from "http";
 import {Server} from "socket.io";
 import 'dotenv/config'
 
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 const httpServer = createServer(app);
@@ -98,5 +98,4 @@ io.on("connection", (socket) => {
     })
 });
 
-// Listens on 8080
-httpServer.listen(port);
+httpServer.listen(PORT);
