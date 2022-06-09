@@ -1,5 +1,5 @@
 import io from "socket.io-client"
 
-const SERVER = "https://spellit-server-4ow2c.ondigitalocean.app/"
+const SERVER = "https://starfish-app-wysgy.ondigitalocean.app/"
 
 export default io(SERVER);
