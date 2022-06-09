@@ -5,9 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production",
-    "serve": "./node_modules/.bin/http-server"
+    "build": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +17,6 @@
     "socket.io": "^4.4.1"
   },
   "dependencies": {
-    "install": "^0.13.0",
-    "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
-    "npm": "^8.6.0"
+    "microsoft-cognitiveservices-speech-sdk": "^1.20.0"
   }
 }

@@ -10,7 +10,7 @@ const Audio = (props) => {
         let objectUrl = URL.createObjectURL(blob);
         audio.src = objectUrl;
 
-        audio.onload = function (evt) {
+        audio.onload = (evt) => {
             URL.revokeObjectURL(objectUrl);
         };
         audio.play();

@@ -3,32 +3,35 @@ import {Button, ButtonGroup, Center, FormControl, Input, Stack,} from "@chakra-u
 import Audio from "../modules/Audio";
 import socket from "../modules/Socket";
 
-const Controls = () => {
+// Gives controls for playing audio
+// --> Listens and sends tts
+
+const Controls = (props) => {
+
     const [input, setInput] = useState(null);
     const [text, setText] = useState(null);
     const [audioStream, setAudioStream] = useState(null);
 
-    let props = {
-        audioStream: audioStream,
-    }
-
     useEffect(() => {
+
         // Socket.io -> Listens for a TextToSpeech response from the server
         socket.on("tts", (output) => {
-            console.log("TextToSpeech before setAudioStream")
-            setAudioStream(output)
+            if (output.roomName == props.roomName) {
+                setAudioStream(output.stream);
+            }
         });
-        socket.on("broadcast", (broadcast) => {
-            console.log(broadcast);
-        });
+
     }, [socket]);
 
     // Emiting TextToSpeech to Socket.io with text as an argument
     useEffect(() => {
+
         if (text === null) return;
         socket.emit("tts", {
             text: text,
+            roomName: props.roomName
         });
+
     }, [text]);
 
     const inputHandler = (e) => setInput(e.target.value);
@@ -48,7 +51,7 @@ const Controls = () => {
                             <Button colorScheme="black" onClick={buttonClickHandlerText}>Play Audio</Button>
                         </ButtonGroup>
                     </Stack>
-                    <Audio output={props.audioStream}></Audio>
+                    <Audio output={audioStream}></Audio>
                 </FormControl>
             </Center>
         </>
