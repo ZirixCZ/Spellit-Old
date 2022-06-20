@@ -17,6 +17,9 @@
     "socket.io": "^4.4.1"
   },
   "dependencies": {
-    "microsoft-cognitiveservices-speech-sdk": "^1.20.0"
+    "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
+    "node-redis": "^0.1.7",
+    "redis": "^4.1.0",
+    "redis-om": "^0.3.4"
   }
 }

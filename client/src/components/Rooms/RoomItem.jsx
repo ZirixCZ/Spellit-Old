@@ -8,11 +8,11 @@ import socket from "../../modules/Socket";
 const RoomItem = (props) => {
 
     const deleteRoom = () => {
-        socket.emit("deleteRoom", props.roomName);
+        socket.emit("deleteRoom", props.roomName.id);
     }
 
     const connectToRoom = () => {
-        socket.emit("connectToRoom", props.roomName);
+        socket.emit("connectToRoom", props.roomName.id);
     }
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const RoomItem = (props) => {
             <button className="w-1/2 text-left ml-10" onClick={() => {
                 connectToRoom()
             }}>
-                <h3 className="text-2xl">{props.roomName}</h3>
+                <h3 className="text-2xl">{props.roomName.name}</h3>
             </button>
             <div className="w-1/2 text-right">
                 <button className="text-4xl mr-10" onClick={() => {

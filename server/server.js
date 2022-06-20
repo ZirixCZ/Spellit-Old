@@ -1,66 +1,14 @@
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import express from "express";
-import {createServer} from "http";
-import {Server} from "socket.io";
 import 'dotenv/config'
+
+import io, {httpServer} from "./lib/io.js";
+import textToSpeech from "./lib/azure.js";
+import {emitRooms, createRoomEntity, removeRoomEntity} from "./lib/rooms.js";
 
 const PORT = process.env.PORT || 8080;
 
-const app = express();
-const httpServer = createServer(app);
-// Setting server options
-const io = new Server(httpServer, {
-    cors: {
-        origin: "*",
-    }
-});
-
-// Asynchronous function which returns audio buffer
-const textToSpeech = async (text) => {
-
-    // The text has to be a string for the function to continue
-    if (text == null || text == undefined) return;
-
-    // Initializing SpeechConfig. Giving it two arguments, the key and setting the region
-    const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.AZURE_KEY, "northeurope")
-
-    // Choosing the voice name for the synthesizer
-    speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural";
-
-    // Asynchronous function which returns audioData
-    const getBufferStream = async () => {
-        return new Promise((resolve, reject) => {
-            // Initializing the synthesizer
-            let synthesizer = new sdk.SpeechSynthesizer(speechConfig);
-            // Calling the speakTextAsync function on the synthesizer. Passing string as an argument
-            synthesizer.speakTextAsync(JSON.parse(JSON.stringify(text)).text,
-                result => {
-                    if (result) {
-                        const {audioData} = result;
-                        synthesizer.close();
-                        resolve(audioData);
-                    }
-                },
-                error => {
-                    synthesizer.close();
-                    reject(error);
-                }
-            )
-        })
-    }
-
-    // Put the audioData from getBufferStream() into bufferStream variable
-    let bufferStream = await getBufferStream();
-
-    // Returning bufferStream with audioData
-    return bufferStream;
-}
-
+// TODO: replace this
 let rooms = [];
-
-const sendUpdatedRoomsArray = () => {
-    io.emit("rooms", rooms);
-}
+let id = rooms.length;
 
 // Socket.io -> Listening for a new connection
 io.on("connection", (socket) => {
@@ -70,20 +18,19 @@ io.on("connection", (socket) => {
     socket.emit("connection");
     // When the user creates a rooms
     socket.on("createRoom", (roomName) => {
-        rooms.push(roomName);
-        sendUpdatedRoomsArray();
+        createRoomEntity(roomName, id, rooms);
+        emitRooms(rooms);
+        id = rooms.length;
     })
     // When the user removes a room
-    socket.on("deleteRoom", (roomName) => {
-        let index = rooms.indexOf(roomName);
-        if (index > -1) {
-            rooms.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        sendUpdatedRoomsArray();
+    socket.on("deleteRoom", (id) => {
+        removeRoomEntity(rooms, id);
+        emitRooms(rooms);
+        id = rooms.length;
     })
     // When the user requests all the rooms
     socket.on("requestRooms", () => {
-        sendUpdatedRoomsArray();
+        emitRooms(rooms);
     })
     // When the user connects to a room
     socket.on("connectToRoom", (roomName) => {
@@ -95,6 +42,10 @@ io.on("connection", (socket) => {
         let bufferStream = await textToSpeech(text);
         // Emits back a TextToSpeech with the bufferStream from textToSpeech()
         io.emit("tts", {stream: bufferStream, roomName: text.roomName});
+    })
+    // On disconnect
+    socket.on("disconnect", (reason) => {
+        console.log(`client disconnected: ${reason}`);
     })
 });
 

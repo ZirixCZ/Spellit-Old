@@ -10,7 +10,7 @@ import socket from "../modules/Socket";
 const Rooms = () => {
 
     const [createRoomName, setCreateRoomName] = useState(null);
-    const [rooms, setRooms] = useState([]);
+    const [rooms, setRooms] = useState(null);
     const inputRef = useRef(null);
 
     const handleSubmit = (e) => {
@@ -36,7 +36,7 @@ const Rooms = () => {
     }
 
     useEffect(() => {
-        if (rooms.length == 0) {
+        if (!rooms) {
             socket.emit("requestRooms");
         }
     }, [rooms])
@@ -48,12 +48,9 @@ const Rooms = () => {
 
     useEffect(() => {
         socket.on("rooms", (rooms) => {
-            for (let i = 0; i < rooms.length; i++) {
-                console.log(rooms[i]);
-            }
+            if (!rooms) return;
             setRooms(rooms);
         })
-
     }, [socket]);
 
     return (
@@ -62,7 +59,7 @@ const Rooms = () => {
                 <h1 className="mt-10 text-3xl">Seems like you aren't connected to any rooms</h1>
                 <div className="overflow-scroll h-full w-full">
                     <div className="h-full w-full mt-10 flex justify-center items-center flex-row flex-wrap">
-                        {rooms.map((room) => <RoomItem roomName={room}/>)}
+                        {rooms ? rooms.map((room) => <RoomItem roomName={room} key={room.id}/>) : <div>Loading...</div>}
                     </div>
                 </div>
                 <Center h="50vh" w="100vw">
