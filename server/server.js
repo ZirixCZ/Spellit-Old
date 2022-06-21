@@ -6,8 +6,6 @@ import {emitRooms, createRoomEntity, removeRoomEntity} from "./lib/rooms.js";
 
 const PORT = process.env.PORT || 8080;
 
-let id;
-
 // Socket.io -> Listening for a new connection
 io.on("connection", (socket) => {
     // Printing out new connection's identification
@@ -16,17 +14,17 @@ io.on("connection", (socket) => {
     socket.emit("connection");
     // When the user creates a rooms
     socket.on("createRoom", async (roomName) => {
-        let fetchID = await emitRooms()
-            .catch((err) => console.log(err))
-            .then(rooms => id = rooms ? rooms.length : 0);
-        console.log(fetchID)
-        createRoomEntity(roomName, id);
-        emitRooms();
+        // let fetchID = await emitRooms()
+        //     .catch((err) => console.log(err))
+        //     .then(rooms => id = rooms ? rooms.length : 0);
+        // console.log(fetchID)
+        await createRoomEntity(roomName)
+            .then(async () => await emitRooms())
     })
     // When the user removes a room
-    socket.on("deleteRoom", async (id) => {
-        removeRoomEntity(id);
-        emitRooms();
+    socket.on("deleteRoom", async (roomName) => {
+        removeRoomEntity(roomName)
+            .then(async () => await emitRooms())
     })
     // When the user requests all the rooms
     socket.on("requestRooms", async () => {

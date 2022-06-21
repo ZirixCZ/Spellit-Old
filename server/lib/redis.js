@@ -12,7 +12,6 @@ class Room extends Entity {}
 let schema = new Schema(
     Room,
     {
-        id: {type: "number"},
         name:  {type: "string"}
     },
     {
@@ -26,7 +25,6 @@ export const createRoom = async (data) => {
     const repository = client.fetchRepository(schema);
 
     const room = repository.createEntity({
-        id: data.id,
         name: data.name
     });
 
@@ -52,7 +50,7 @@ export const removeRoom = async (data) => {
     const repository = client.fetchRepository(schema);
     await repository.createIndex();
 
-    const toBeDeletedRoom = await repository.search().where("id").equals(data.id).returnFirst();
-    await repository.remove(toBeDeletedRoom.entityId)
+    const toBeDeletedRoom = await repository.search().where("name").equals(data.name).returnFirst();
+    await repository.remove(toBeDeletedRoom?.entityId)
 }
 

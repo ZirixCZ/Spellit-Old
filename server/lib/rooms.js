@@ -11,7 +11,6 @@ export const emitRooms = async () => {
     let roomObjects = [];
     for (let i = 0; i < fetchedRooms.length; i++) {
         let object = {
-            id: fetchedRooms[i].entityFields.id._value,
             name: fetchedRooms[i].entityFields.name._value
         }
         roomObjects.push(object);
@@ -21,15 +20,14 @@ export const emitRooms = async () => {
     return roomObjects;
 }
 
-export const removeRoomEntity = (id) => {
-    removeRoom({
-        id: id
+export const removeRoomEntity = async (roomName) => {
+    await removeRoom({
+        name: roomName
     })
 }
 
-export const createRoomEntity = (roomName, id) => {
-    createRoom({
-        id: id,
+export const createRoomEntity = async (roomName) => {
+    await createRoom({
         name: roomName
     })
 }
