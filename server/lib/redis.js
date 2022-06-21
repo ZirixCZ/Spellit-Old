@@ -1,4 +1,4 @@
-import {Client, Entity, Schema, Repository} from "redis-om";
+import {Client, Entity, Schema} from "redis-om";
 
 const client = new Client();
 
@@ -29,8 +29,8 @@ export const createRoom = async (data) => {
         id: data.id,
         name: data.name
     });
-    const id = await repository.save(room);
-    return id;
+
+    return repository.save(room);
 }
 
 export const fetchRoom = async () => {
@@ -41,6 +41,7 @@ export const fetchRoom = async () => {
 
     const rooms = await repository.search()
         .return.all()
+    if (rooms.length === 0) return null;
 
     return rooms;
 }
@@ -52,7 +53,6 @@ export const removeRoom = async (data) => {
     await repository.createIndex();
 
     const toBeDeletedRoom = await repository.search().where("id").equals(data.id).returnFirst();
-    console.log(toBeDeletedRoom)
-    repository.remove(toBeDeletedRoom.entityId)
+    await repository.remove(toBeDeletedRoom.entityId)
 }
 

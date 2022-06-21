@@ -1,10 +1,13 @@
 import io from "./io.js";
 import {createRoom, fetchRoom, removeRoom} from "./redis.js";
 
-export const emitRooms = async (updatedRooms) => {
+export const emitRooms = async () => {
     let fetchedRooms = await fetchRoom()
-    if (!fetchedRooms[0]) return;
-
+    console.log(fetchedRooms?.length + JSON.stringify(fetchedRooms))
+    if (!fetchedRooms?.length) {
+        io.emit("rooms", null);
+        return 0;
+    }
     let roomObjects = [];
     for (let i = 0; i < fetchedRooms.length; i++) {
         let object = {
@@ -13,26 +16,18 @@ export const emitRooms = async (updatedRooms) => {
         }
         roomObjects.push(object);
     }
-    console.log(roomObjects)
     io.emit("rooms", roomObjects);
+
+    return roomObjects;
 }
 
-export const removeRoomEntity = (rooms, id) => {
-    for (let index = 0; index < rooms.length; index++) {
-        if (rooms[index].id === id) {
-            rooms.splice(index, 1);
-        }
-    }
+export const removeRoomEntity = (id) => {
     removeRoom({
         id: id
     })
 }
 
-export const createRoomEntity = (roomName, id, rooms) => {
-    rooms.push({
-        id: id,
-        name: roomName
-    });
+export const createRoomEntity = (roomName, id) => {
     createRoom({
         id: id,
         name: roomName
