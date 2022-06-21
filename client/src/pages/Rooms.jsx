@@ -48,7 +48,11 @@ const Rooms = () => {
 
     useEffect(() => {
         socket.on("rooms", (rooms) => {
-            if (!rooms) return;
+            if (!rooms) {
+                setRooms([])
+                return;
+            }
+            
             setRooms(rooms);
         })
     }, [socket]);
