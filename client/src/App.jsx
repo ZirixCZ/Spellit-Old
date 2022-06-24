@@ -35,7 +35,7 @@ const App = () => {
         <>
             <NavBar socketID={props.id}/>
             <Routes>
-                <Route path="/" element={isConnected ? <Controls roomName={connectedRoom}/> : <Rooms/>}></Route>
+                <Route path="/" element={isConnected ? <Controls title={connectedRoom}/> : <Rooms/>}></Route>
                 <Route path="*" element={<PageNotFound/>}></Route>
             </Routes>
         </>

@@ -16,7 +16,7 @@ const Controls = (props) => {
 
         // Socket.io -> Listens for a TextToSpeech response from the server
         socket.on("tts", (output) => {
-            if (output.roomName == props.roomName) {
+            if (output.title === props.title) {
                 setAudioStream(output.stream);
             }
         });
@@ -29,7 +29,7 @@ const Controls = (props) => {
         if (text === null) return;
         socket.emit("tts", {
             text: text,
-            roomName: props.roomName
+            title: props.title
         });
 
     }, [text]);
