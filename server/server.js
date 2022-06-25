@@ -1,46 +1,43 @@
 import 'dotenv/config'
 
-import io, {httpServer} from "./lib/io.js";
+import {httpServer, app, io} from "./lib/io.js";
 import textToSpeech from "./lib/azure.js";
 import {emitRooms, createRoomEntity, removeRoomEntity} from "./lib/rooms.js";
 
 const PORT = process.env.PORT || 8080;
 
+app.get("/roomRequest", async (req, res) => {
+    res.send(await emitRooms());
+})
+
+app.post("/createRoom", async (req, res) => {
+    res.send(await createRoomEntity(req.body.title))
+})
+
+app.post("/deleteRoom", async (req, res) => {
+    res.send(await removeRoomEntity(req.body.title));
+})
+
 // Socket.io -> Listening for a new connection
 io.on("connection", (socket) => {
-    // Printing out new connection's identification
+
     console.log(`new client: ${socket.id}`);
-    // Emits a connection back to the requesting client
+
     socket.emit("connection");
-    // When the user creates a rooms
-    socket.on("createRoom", async (roomName) => {
-        // let fetchID = await emitRooms()
-        //     .catch((err) => console.log(err))
-        //     .then(rooms => id = rooms ? rooms.length : 0);
-        // console.log(fetchID)
-        await createRoomEntity(roomName)
-            .then(async () => await emitRooms())
-    })
-    // When the user removes a room
-    socket.on("deleteRoom", async (roomName) => {
-        removeRoomEntity(roomName)
-            .then(async () => await emitRooms())
-    })
-    // When the user requests all the rooms
-    socket.on("requestRooms", async () => {
-        await emitRooms();
-    })
+
     // When the user connects to a room
-    socket.on("connectToRoom", (roomName) => {
-        socket.join(roomName);
-        io.sockets.in(roomName).emit('roomConnection', roomName);
+    socket.on("connectToRoom", (title) => {
+        socket.join(title);
+        io.sockets.in(title).emit('roomConnection', title);
     })
+
     // Socket.io -> Listening for TextToSpeech
-    socket.on("tts", async (text) => {
-        let bufferStream = await textToSpeech(text);
+    socket.on("tts", async (data) => {
+        let bufferStream = await textToSpeech(data);
         // Emits back a TextToSpeech with the bufferStream from textToSpeech()
-        io.emit("tts", {stream: bufferStream, roomName: text.roomName});
+        io.emit("tts", {stream: bufferStream, title: data.title});
     })
+
     // On disconnect
     socket.on("disconnect", (reason) => {
         console.log(`client disconnected: ${reason}`);

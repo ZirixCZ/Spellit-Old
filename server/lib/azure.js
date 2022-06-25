@@ -1,10 +1,9 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 
-const textToSpeech = async (text) => {
+const textToSpeech = async (data) => {
 
     // The text has to be a string for the function to continue
-    if (text == null || text == undefined) return;
-
+    if (data == null) return;
     // Initializing SpeechConfig. Giving it two arguments, the key and setting the region
     const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.AZURE_KEY, "northeurope")
 
@@ -17,7 +16,7 @@ const textToSpeech = async (text) => {
             // Initializing the synthesizer
             let synthesizer = new sdk.SpeechSynthesizer(speechConfig);
             // Calling the speakTextAsync function on the synthesizer. Passing string as an argument
-            synthesizer.speakTextAsync(JSON.parse(JSON.stringify(text)).text,
+            synthesizer.speakTextAsync(JSON.parse(JSON.stringify(data)).text,
                 result => {
                     if (result) {
                         const {audioData} = result;

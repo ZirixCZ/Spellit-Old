@@ -12,7 +12,7 @@ class Room extends Entity {}
 let schema = new Schema(
     Room,
     {
-        name:  {type: "string"}
+        title:  {type: "string"}
     },
     {
         dataStructure: "JSON"
@@ -21,24 +21,23 @@ let schema = new Schema(
 
 export const createRoom = async (data) => {
     await connect();
-
     const repository = client.fetchRepository(schema);
-
     const room = repository.createEntity({
-        name: data.name
+        title: data.title
     });
 
-    return repository.save(room);
+    await repository.save(room);
+
+    return true;
 }
 
 export const fetchRoom = async () => {
     await connect();
-
     const repository = client.fetchRepository(schema);
     await repository.createIndex();
-
     const rooms = await repository.search()
         .return.all()
+
     if (rooms.length === 0) return null;
 
     return rooms;
@@ -46,11 +45,10 @@ export const fetchRoom = async () => {
 
 export const removeRoom = async (data) => {
     await connect();
-    console.log(data)
     const repository = client.fetchRepository(schema);
     await repository.createIndex();
+    const toBeDeletedRoom = await repository.search().where("title").equals(data.title).returnFirst();
+    await repository.remove(toBeDeletedRoom?.entityId);
 
-    const toBeDeletedRoom = await repository.search().where("name").equals(data.name).returnFirst();
-    await repository.remove(toBeDeletedRoom?.entityId)
+    return true;
 }
-
