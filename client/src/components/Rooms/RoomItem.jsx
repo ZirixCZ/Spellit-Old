@@ -8,7 +8,7 @@ import socket from "../../modules/Socket";
 const RoomItem = (props) => {
 
     const connectToRoom = () => {
-        socket.emit("connectToRoom", props.properties.name);
+        socket.emit("connectToRoom", props.properties.title);
     }
 
     useEffect(() => {

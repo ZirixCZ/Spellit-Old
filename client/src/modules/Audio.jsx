@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
 const Audio = (props) => {
-    console.log("audio -> start")
     const playerRef = useRef();
 
     const playAudio = () => {
@@ -17,7 +16,6 @@ const Audio = (props) => {
     }
 
     useEffect(() => {
-        console.log("audio -> useeffect");
         playAudio();
     }, [props.output])
 
